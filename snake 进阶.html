@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5,maximum-scale=1.5">
+    <title>Document</title>
+    <link rel="stylesheet" href="">
+    <style>
+        html,
+        body {
+            margin: 0 auto;
+        } 
+        h2 {
+            text-align: center;
+        }
+        button {
+            margin: auto;
+            display: inline-block;
+            text-align: center;
+            color: brown;
+        }
+        canvas {
+            background-color: rgb(10, 143, 215);
+            display: block;
+            margin: 0 auto;
+        }
+        #btn {
+            width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <h2>贪吃蛇游戏</h2>
+    <canvas id="myCanvas" width="600" height="600" style="margin: 0 auto;"></canvas>
+    <div id="btn">
+        <button id="btnStart" type="button" onclick="startSnake();">开始游戏</button>
+        <button id="right">向右</button>
+        <button id="left">向左</button>
+        <button id="top">向上</button>
+        <button id="bottom">向下</button>
+        <p>分数：<span id="score">0</span></p>
+    </div>
+    <script>
+        // 进阶：
+        //     1.添加分数
+        //     2.点击开始游戏按钮开始
+        //     3.添加默认界面；
+        // 添加难度：蛇移动速度加快
+        // 生成的食物为随机颜色
+    </script>
+    <script>
+        // 获取画布对象
+        var canvas = document.getElementById('myCanvas');
+        // 获取画布工具箱
+        var tools = canvas.getContext("2d");
+        // 定义食物坐标
+        //   定义x轴坐标
+        var x = Math.floor(Math.random() * 20) * 30;
+        //   定义y轴坐标
+        var y = Math.floor(Math.random() * 20) * 30;
+        // 定义状态食物是否被吃
+        var isEated = false;
+        // 定义状态游戏是否结束判定
+        var isGameOver = false;
+        var sco=0;
+        var score=document.getElementById('score');
+        // 初始化蛇snake
+        var snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+        // 初始化蛇的自动移动方向，1为右/上，-1为左/下，0为静止状态
+        var directionX = 1;
+        var directionY = 0;
+        // 获取“向右”按钮
+        var rightBtn = document.getElementById("right");
+        // 获取“向左”按钮
+        var leftBtn = document.getElementById("left");
+        // 获取“向上”按钮
+        var topBtn = document.getElementById("top");
+        // 获取“向下”按钮
+        var bottomBtn = document.getElementById("bottom");
+        // 定义按钮方向移动事件 keycode:38 40 37 39 监听到相关keycode触发蛇的移动方向
+        rightBtn.onclick = function () {
+            directionX = -1;
+            directionY = 0;
+            console.log(event.keyCode);
+        }
+        leftBtn.onclick = function () {
+            directionX = 1;
+            directionY = 0;
+            console.log(event.keyCode);
+        }
+        topBtn.onclick = function () {
+            directionX = 0;
+            directionY = -1;
+            console.log(event.keyCode);
+        }
+        bottomBtn.onclick = function () {
+            directionX = 0;
+            directionY = 1;
+            console.log(event.keyCode);
+        }
+        // 定义键盘方向移动事件 keycode:38 40 37 39 监听到相关keycode触发蛇的移动方向
+        document.addEventListener("keydown", function (event) {
+            if (event.keyCode === 37) {
+                directionX = -1;
+                directionY = 0;
+            }
+            if (event.keyCode === 38) {
+                directionX = 0;
+                directionY = -1;
+            }
+            if (event.keyCode === 39) {
+                directionX = 1;
+                directionY = 0;
+            }
+            if (event.keyCode === 40) {
+                directionX = 0;
+                directionY = 1;
+            }
+            console.log(event.keyCode);
+        })
+
+        // 绘制snake
+            for (let i = 0; i < snake.length; i++) {
+            // 填充蛇头颜色
+            if (i == 0) {
+            tools.fillStyle = "red";
+            } else {
+            // 填充蛇身颜色
+            tools.fillStyle = "orange";
+            }
+            // 渲染snake
+            tools.fillRect(snake[i].x * 30, snake[i].y * 30, 30, 30);
+        }
+        
+        // 绘制网格线
+        //   水平线渲染
+        for (let i = 0; i < 600 / 30; i++) {
+            // 寻找开始和终点坐标
+            tools.moveTo(0, 30 * i + 0.5);
+            tools.lineTo(600, 30 * i + 0.5);
+        }
+        //   垂直线渲染
+        for (let i = 0; i < 600 / 30; i++) {
+            // 寻找开始和终点坐标
+            tools.moveTo(30 * i + 0.5, 0);
+            tools.lineTo(30 * i + 0.5, 600);
+        }
+        // 修改网格线颜色为白色
+        tools.strokeStyle = "white";
+        // 开始渲染
+        tools.stroke();
+
+        // 游戏开始：画布进行擦除和重绘
+        function startSnake() {
+            setInterval(function () { sank1Start(); }, 1000 / 3);
+        }
+        // var gameStart = 
+        function sank1Start() {
+            if (isGameOver == true) {
+                console.log("Game Over!");
+                clearInterval(gameStart);
+            } else {
+                console.log("游戏开始")
+                tools.clearRect(0, 0, 600, 600);
+                if (snake[0].x * 30 === x && snake[0].y * 30 === y) {
+                    isEated = true;
+                } else {
+                    isEated = false;
+                    snake.pop();
+                }
+                // 绘制食物
+                if (isEated) {
+                    //   重新定义x轴坐标
+                    x = Math.floor(Math.random() * 20) * 30;
+                    //   重新定义y轴坐标
+                    y = Math.floor(Math.random() * 20) * 30;
+                    sco+=1;
+                    score.innerText=sco;
+                    isEated = false;
+                }
+                //   开始渲染食物
+                // tools.fillStyle = "black";
+                // tools.fillStyle = "rgb(165,42,42)";
+                var a=Math.floor(Math.random()* 256);
+                console.log(a);
+                tools.fillStyle = "rgb(a,a,a)";
+                tools.fillRect(x, y, 30, 30);
+                // 设置蛇的移动方向
+                snake.unshift({
+                    x: snake[0].x + directionX,
+                    y: snake[0].y + directionY
+                })
+                // 绘制snake
+                for (let i = 0; i < snake.length; i++) {
+                    // 填充蛇头颜色
+                    if (i == 0) {
+                        tools.fillStyle = "red";
+                    } else {
+                        // 填充蛇身颜色
+                        tools.fillStyle = "orange";
+                    }
+                    // 渲染snake
+                    tools.fillRect(snake[i].x * 30, snake[i].y * 30, 30, 30);
+                }
+                // 边界判定，如果snake触碰边界，游戏结束。
+                if (snake[0].x < 0 || snake[0].y < 0 || snake[0].x * 30 >= 600 || snake[0].y * 30 >= 600) { isGameOver = true; }
+            }
+
+            // 绘制网格线
+            //   水平线渲染
+            for (let i = 0; i < 600 / 30; i++) {
+                // 寻找开始和终点坐标
+                tools.moveTo(0, 30 * i + 0.5);
+                tools.lineTo(600, 30 * i + 0.5);
+            }
+            //   垂直线渲染
+            for (let i = 0; i < 600 / 30; i++) {
+                // 寻找开始和终点坐标
+                tools.moveTo(30 * i + 0.5, 0);
+                tools.lineTo(30 * i + 0.5, 600);
+            }
+            // 修改网格线颜色为白色
+            tools.strokeStyle = "white";
+            // 开始渲染
+            tools.stroke();
+        }
+    </script>
+</body>
+</html>
